@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>여행 플래너</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f8f7f4;
+    color: #2d2d2d;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    background: #ffffff;
+    border-bottom: 1px solid #e8e4de;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    height: 60px;
+    gap: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+  }
+
+  .nav-logo {
+    margin-right: 32px;
+    color: #c8a97e;
+    font-size: 22px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+  }
+
+  .nav-logo svg {
+    width: 26px;
+    height: 26px;
+    fill: none;
+    stroke: #c8a97e;
+    stroke-width: 2;
+  }
+
+  .nav-divider {
+    width: 1px;
+    height: 28px;
+    background: #e8e4de;
+    margin: 0 4px;
+  }
+
+  .nav-link {
+    padding: 0 20px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.2s, border-bottom 0.2s;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+
+  .nav-link:hover { color: #c8a97e; }
+  .nav-link.active {
+    color: #c8a97e;
+    border-bottom: 2px solid #c8a97e;
+    font-weight: 600;
+  }
+
+  /* HERO SLIDESHOW */
+  .hero {
+    position: relative;
+    width: 100%;
+    max-width: 1100px;
+    margin: 36px auto 0;
+    padding: 0 24px;
+  }
+
+  .slideshow-wrapper {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #e9e5df;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  }
+
+  .slides {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .slide {
+    min-width: 100%;
+    height: 420px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+  }
+
+  .slide-bg {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease;
+  }
+
+  .slide:hover .slide-bg { transform: scale(1.03); }
+
+  .slide-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(30,25,20,0.70) 0%, rgba(30,25,20,0.10) 55%, transparent 100%);
+  }
+
+  .slide-content {
+    position: relative;
+    z-index: 2;
+    padding: 36px 40px;
+    color: #fff;
+  }
+
+  .slide-tag {
+    display: inline-block;
+    background: #c8a97e;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+
+  .slide-title {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.25;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .slide-desc {
+    font-size: 14px;
+    opacity: 0.85;
+    max-width: 400px;
+  }
+
+  /* Play / Pause */
+  .slide-controls {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ctrl-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.20);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.30);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    font-size: 13px;
+  }
+
+  .ctrl-btn:hover { background: rgba(200,169,126,0.70); }
+
+  /* Dots */
+  .dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 0 6px;
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #d0cbc3;
+    cursor: pointer;
+    transition: background 0.25s, transform 0.25s;
+    border: none;
+    outline: none;
+  }
+
+  .dot.active {
+    background: #c8a97e;
+    transform: scale(1.3);
+  }
+
+  /* Arrow buttons */
+  .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    backdrop-filter: blur(6px);
+    border: 1px solid rgba(255,255,255,0.35);
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    font-size: 16px;
+  }
+
+  .arrow:hover { background: rgba(200,169,126,0.75); }
+  .arrow.left { left: 16px; }
+  .arrow.right { right: 16px; }
+
+  /* SECTIONS BELOW */
+  .section-grid {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,0.11);
+  }
+
+  .card-img {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    display: block;
+    background: #e9e5df;
+  }
+
+  .card-img-placeholder {
+    width: 100%;
+    height: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+  }
+
+  .card-body {
+    padding: 18px 20px 20px;
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #c8a97e;
+    margin-bottom: 6px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e1a16;
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: #888;
+    line-height: 1.6;
+  }
+
+  .card-footer {
+    padding: 0 20px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .card-meta {
+    font-size: 12px;
+    color: #aaa;
+  }
+
+  .card-btn {
+    font-size: 12px;
+    font-weight: 600;
+    color: #c8a97e;
+    background: #fdf6ee;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .card-btn:hover { background: #f5e8d0; }
+
+  /* SECTION TITLE */
+  .section-header {
+    max-width: 1100px;
+    margin: 56px auto 0;
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1e1a16;
+    letter-spacing: -0.01em;
+  }
+
+  .section-title span {
+    color: #c8a97e;
+  }
+
+  .see-all {
+    font-size: 13px;
+    color: #c8a97e;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .see-all:hover { text-decoration: underline; }
+
+  /* TIMETABLE PREVIEW */
+  .timetable-section {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding: 0 24px;
+  }
+
+  .timetable-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 28px 32px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+
+  .timetable-row {
+    display: flex;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid #f0ece6;
+    gap: 20px;
+  }
+
+  .timetable-row:last-child { border-bottom: none; }
+
+  .tt-time {
+    min-width: 80px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #c8a97e;
+  }
+
+  .tt-badge {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .badge-direct { background: #e8f5e9; color: #4caf50; }
+  .badge-stop { background: #fff3e0; color: #ff9800; }
+
+  .tt-route {
+    flex: 1;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .tt-duration {
+    font-size: 13px;
+    color: #999;
+    min-width: 70px;
+    text-align: right;
+  }
+
+  .tt-price {
+    font-size: 14px;
+    font-weight: 700;
+    color: #2d2d2d;
+    min-width: 80px;
+    text-align: right;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 80px;
+    background: #1e1a16;
+    color: #999;
+    padding: 40px 40px 32px;
+    font-size: 13px;
+  }
+
+  .footer-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+
+  .footer-brand {
+    font-size: 18px;
+    font-weight: 700;
+    color: #c8a97e;
+    margin-bottom: 8px;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+
+  .footer-links a {
+    color: #999;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: #c8a97e; }
+
+  .footer-copy {
+    width: 100%;
+    text-align: center;
+    margin-top: 28px;
+    color: #555;
+    font-size: 12px;
+    border-top: 1px solid #333;
+    padding-top: 20px;
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 900px) {
+    .section-grid { grid-template-columns: repeat(2, 1fr); }
+    nav { padding: 0 16px; }
+    .nav-link { padding: 0 12px; font-size: 13px; }
+  }
+
+  @media (max-width: 600px) {
+    .section-grid { grid-template-columns: 1fr; }
+    .slide { height: 280px; }
+    .slide-title { font-size: 20px; }
+    .hero { padding: 0 12px; }
+    .timetable-card { padding: 18px 16px; }
+    .tt-price, .tt-duration { display: none; }
+    nav { overflow-x: auto; gap: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="nav-logo">
+    <svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 13.5 4 8.5C4 5.46 7.13 3 12 3C16.87 3 20 5.46 20 8.5C20 13.5 12 21 12 21Z"/><circle cx="12" cy="9" r="2.5"/></svg>
+  </div>
+  <div class="nav-divider"></div>
+  <a class="nav-link active" onclick="setActive(this)">홈</a>
+  <div class="nav-divider"></div>
+  <a class="nav-link" onclick="setActive(this)">시간표</a>
+  <div class="nav-divider"></div>
