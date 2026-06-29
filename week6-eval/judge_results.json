@@ -1,0 +1,46 @@
+[
+  {
+    "question": "RAG가 뭐야?",
+    "answer": "RAG는 Retrieval-Augmented Generation의 약자로, 검색으로 관련 문서를 찾아 LLM 컨텍스트에 추가한 뒤 답변을 생성하는 기법입니다. LLM의 지식 한계를 외부 데이터로 보완합니다.",
+    "evaluation": {
+      "accuracy": 9,
+      "completeness": 8,
+      "clarity": 9,
+      "overall": 8,
+      "reason": "RAG의 정의와 작동 원리를 정확하고 명확하게 설명했으나, 실제 활용 사례나 장점에 대한 구체적인 예시가 있으면 더 완전했을 것입니다."
+    }
+  },
+  {
+    "question": "RAG가 뭐야?",
+    "answer": "RAG는 좋은 기술입니다. 많이 쓰입니다.",
+    "evaluation": {
+      "accuracy": 5,
+      "completeness": 2,
+      "clarity": 4,
+      "overall": 3,
+      "reason": "RAG의 정의나 구체적인 기능을 설명하지 않고 단순한 평가만 제시하여 질문에 대한 실질적인 답변이 부족합니다."
+    }
+  },
+  {
+    "question": "파이썬 리스트와 튜플 차이는?",
+    "answer": "리스트는 변경 가능(mutable)하고 튜플은 변경 불가능(immutable)합니다. 리스트는 []로, 튜플은 ()로 만듭니다. 튜플이 약간 더 빠르고 메모리 효율적이라 변하지 않는 데이터에 적합합니다.",
+    "evaluation": {
+      "accuracy": 9,
+      "completeness": 7,
+      "clarity": 9,
+      "overall": 8,
+      "reason": "핵심 차이점(mutable vs immutable)과 문법, 성능 차이를 정확하게 설명했으나, 인덱싱, 메서드 차이, 딕셔너리 키 사용 등 추가적인 실무 활용 측면의 설명이 부족합니다."
+    }
+  },
+  {
+    "question": "파이썬 리스트와 튜플 차이는?",
+    "answer": "둘 다 데이터를 담는 자료구조입니다.",
+    "evaluation": {
+      "accuracy": 7,
+      "completeness": 2,
+      "clarity": 8,
+      "overall": 3,
+      "reason": "리스트와 튜플이 모두 데이터 자료구조라는 것은 맞지만, 가변성, 성능, 사용 사례 등 핵심 차이점들이 전혀 설명되지 않아 질문에 대한 충분한 답변이 되지 못합니다."
+    }
+  }
+]
